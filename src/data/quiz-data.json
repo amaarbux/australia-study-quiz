@@ -1,0 +1,217 @@
+{
+  "questions": [
+    {
+      "id": "passion",
+      "type": "swipe-card",
+      "question": "Choose your path to your Aussie knowledge mastery!",
+      "hint": "Swipe to Select Card then Confirm",
+      "options": [
+        { "label": "Business", "value": "business", "image": "/images/passion/passion-I.png" },
+        { "label": "Engineering", "value": "engineering", "image": "/images/passion/passion-II.png" },
+        { "label": "Health Science", "value": "health-science", "image": "/images/passion/passion-III.png" },
+        { "label": "Art & Humanities", "value": "art-humanities", "image": "/images/passion/passion-IV.png" },
+        { "label": "Environmental Studies", "value": "environmental-studies", "image": "/images/passion/env-studies-card.png" },
+        { "label": "IT & Computer Science", "value": "it-computer-science", "image": "/images/passion/passion-VI.png" },
+        { "label": "Design & Creative Arts", "value": "design-creative-arts", "image": "/images/passion/passion-VII.png" },
+        { "label": "Law", "value": "law", "image": "/images/passion/passion-VIII.png" },
+        { "label": "Nursing", "value": "nursing", "image": "/images/passion/passion-IX.png" },
+        { "label": "Education", "value": "education", "image": "/images/passion/passion-X.png" },
+        { "label": "Social Work", "value": "social-work", "image": "/images/passion/passion-XI.png" },
+        { "label": "Other", "value": "other", "image": "/images/passion/passion-XII.png" }
+      ]
+    },
+    {
+      "id": "partner",
+      "type": "character-select",
+      "question": "Who's your wild partner on this epic journey through Australia?",
+      "hint": "Select Character then Confirm",
+      "options": [
+        { "label": "Koala Chill", "value": "koala", "image": "/images/partner/koala-full.png" },
+        { "label": "Kangaroo Jumper", "value": "kangaroo", "image": "/images/partner/kangaroo-full.png" },
+        { "label": "Wombat Warrior", "value": "wombat", "image": "/images/partner/wombat-full.png" },
+        { "label": "Crocodile Survivor", "value": "crocodile", "image": "/images/partner/crocodile-full.png" }
+      ]
+    },
+    {
+      "id": "treasure",
+      "type": "text-select",
+      "question": "What's your treasure chest looking for this Aussie quest?",
+      "hint": "Select Answer then Confirm",
+      "backgroundStyle": "orange-gradient",
+      "image": "/images/treasure/treasure-chest.png",
+      "options": [
+        { "label": "Small Fortune - Under AUD 25k", "value": "under-25k" },
+        { "label": "Well Stocked - AUD 25k - 35k", "value": "25k-35k" },
+        { "label": "Treasure Trove - AUD 35k - 45k", "value": "35k-45k" },
+        { "label": "Endless Gold - Over AUD 45k", "value": "over-45k" }
+      ]
+    },
+    {
+      "id": "fun-studies",
+      "type": "image-grid",
+      "question": "How will you judge fun and studies on your journey?",
+      "hint": "Select Image then Confirm",
+      "backgroundStyle": "orange-warm",
+      "options": [
+        { "label": "All Work, No Play", "value": "all-work", "image": "/images/fun/all-work.png" },
+        { "label": "Balanced Adventurer", "value": "balanced", "image": "/images/fun/balanced.png" },
+        { "label": "Relaxed Scholar", "value": "relaxed", "image": "/images/fun/relaxed.png" },
+        { "label": "Party Expert", "value": "party", "image": "/images/fun/party.png" }
+      ]
+    },
+    {
+      "id": "basecamp",
+      "type": "text-select",
+      "question": "Where will you set up your basecamp for learning?",
+      "hint": "Select Answer then Confirm",
+      "backgroundStyle": "cream",
+      "image": "/images/basecamp/suitcase.png",
+      "options": [
+        { "label": "Big and Creative", "value": "big-creative" },
+        { "label": "Fast-paced and Exciting", "value": "fast-exciting" },
+        { "label": "Quiet and Relaxed", "value": "quiet-relaxed" },
+        { "label": "A mix of City and Nature", "value": "city-nature" }
+      ]
+    },
+    {
+      "id": "downtime",
+      "type": "swipe-card",
+      "question": "How will you level up during your Aussie quest downtime?",
+      "hint": "Swipe to Select Card then Confirm",
+      "options": [
+        { "label": "Surf the Waves", "value": "surf", "image": "/images/downtime/surf.png" },
+        { "label": "Hike the Outback", "value": "hike", "image": "/images/downtime/hike.png" },
+        { "label": "City Explorer", "value": "city", "image": "/images/downtime/city.png" },
+        { "label": "Wildlife Watcher", "value": "wildlife", "image": "/images/downtime/wildlife.png" }
+      ]
+    },
+    {
+      "id": "university",
+      "type": "text-select",
+      "question": "Do you need a top-tier university to claim victory of the quest?",
+      "hint": "Select Answer then Confirm",
+      "backgroundStyle": "orange-gradient",
+      "image": "/images/university/badge.png",
+      "options": [
+        { "label": "Top 100 or Bust!", "value": "top-100" },
+        { "label": "Top 200 works for me!", "value": "top-200" },
+        { "label": "It's all about the program", "value": "program" },
+        { "label": "Who cares about ranking?", "value": "no-ranking" }
+      ]
+    },
+    {
+      "id": "levelup",
+      "type": "image-grid",
+      "question": "How will you level up after graduation?",
+      "hint": "Select Image then Confirm",
+      "backgroundStyle": "navy",
+      "options": [
+        { "label": "Enter the Arena", "value": "arena", "image": "/images/levelup/arena.png" },
+        { "label": "Power Up Your Knowledge", "value": "knowledge", "image": "/images/levelup/knowledge.png" },
+        { "label": "Build Your Own Path", "value": "path", "image": "/images/levelup/path.png" },
+        { "label": "Embark on a World Tour", "value": "tour", "image": "/images/levelup/tour.png" }
+      ]
+    }
+  ],
+  "outcomes": {
+    "city-visionary": {
+      "title": "City Visionary",
+      "image": "/images/outcomes/city-visionary.png",
+      "traits": ["Resilient", "Resourceful", "Focused"],
+      "description": "You thrive in vibrant urban settings where creativity and innovation collide. This bustling environment fuels your academic pursuits, providing endless inspiration and networking opportunities. Embrace the energy of the city while diving deep into your studies!",
+      "personality": "Serious Study Person",
+      "baseCamp": "Melbourne",
+      "luckyCharm": "You have everything prepared in hand and ready to use!",
+      "partner": "Creative Learner"
+    },
+    "dynamic-explorer": {
+      "title": "Dynamic Explorer",
+      "image": "/images/outcomes/dynamic-explorer.png",
+      "traits": ["Energetic", "Optimistic", "Social"],
+      "description": "You love the thrill of a fast-paced lifestyle! Balancing your studies with fun adventures. From exploring cafes to attending events, you make the most of every moment while achieving your goals.",
+      "personality": "Relaxed Person",
+      "baseCamp": "Sydney",
+      "luckyCharm": "You are ready to capture every moment!",
+      "partner": "Adventurous Scholar"
+    },
+    "focused-scholar": {
+      "title": "Focused Scholar",
+      "image": "/images/outcomes/focused-scholar.png",
+      "traits": ["Patient", "Organised", "Calm"],
+      "description": "You thrive in peaceful, serene environments that foster concentration and reflection, valuing the calm that supports your focused, committed studies.",
+      "personality": "Serious Study Person",
+      "baseCamp": "Adelaide or Hobart",
+      "luckyCharm": "With the headphones, you are able to concentrate better",
+      "partner": "Mindful Learner"
+    },
+    "nature-loving-learner": {
+      "title": "Nature-Loving Learner",
+      "image": "/images/outcomes/nature-loving-learner.png",
+      "traits": ["Adaptable", "Curious", "Mindful"],
+      "description": "You find inspiration in both city life and nature, with your studies enriched by your surroundings. You balance academics with moments of relaxation in tranquil settings.",
+      "personality": "Quiet and Relaxed",
+      "baseCamp": "Brisbane or Perth",
+      "luckyCharm": "With the headphones, you are able to concentrate better",
+      "partner": "Adventurous Scholar"
+    },
+    "creative-innovator": {
+      "title": "Creative Innovator",
+      "image": "/images/outcomes/creative-innovator.png",
+      "traits": ["Chill", "Inspiring", "Flexible"],
+      "description": "You embrace a laid-back vibe in a vibrant city, drawing inspiration from its artistic energy while balancing relaxation and self-care.",
+      "personality": "Serious Study Person",
+      "baseCamp": "Melbourne",
+      "luckyCharm": "You have everything prepared in hand and ready to use!",
+      "partner": "Dynamic Explorer"
+    },
+    "adventurous-scholar": {
+      "title": "Adventurous Scholar",
+      "image": "/images/outcomes/adventurous-scholar.png",
+      "traits": ["Driven", "Goal-Oriented", "Ambitious"],
+      "description": "You thrive in a fast-paced life, balancing academic focus with seizing exciting opportunities for personal growth.",
+      "personality": "Relaxed Person",
+      "baseCamp": "Sydney",
+      "luckyCharm": "You are ready to capture every moment!",
+      "partner": "Dynamic Explorer"
+    },
+    "mindful-learner": {
+      "title": "Mindful Learner",
+      "image": "/images/outcomes/mindful-learner.png",
+      "traits": ["Self-Aware", "Disciplined", "Patient"],
+      "description": "You study in a calm, reflective way, valuing peaceful environments that foster mindfulness and creativity. Your relaxed approach balances academics with personal wellness.",
+      "personality": "Quiet and Relaxed",
+      "baseCamp": "Adelaide or Hobart",
+      "luckyCharm": "With the headphones, you are able to concentrate better",
+      "partner": "Focused Scholar"
+    },
+    "balanced-adventurer": {
+      "title": "Balanced Adventurer",
+      "image": "/images/outcomes/balanced-adventurer.png",
+      "traits": ["Creative", "Resourceful", "Curious"],
+      "description": "You balance studies with life's adventures, thriving in both city vibrancy and nature's calm, creating a routine that blends productivity and relaxation.",
+      "personality": "Quiet and Relaxed",
+      "baseCamp": "Brisbane or Perth",
+      "luckyCharm": "With the headphones, you are able to concentrate better",
+      "partner": "Nature-Loving Learner"
+    }
+  },
+  "outcomeLogic": {
+    "big-creative+all-work": "city-visionary",
+    "fast-exciting+balanced": "dynamic-explorer",
+    "quiet-relaxed+all-work": "focused-scholar",
+    "city-nature+relaxed": "nature-loving-learner",
+    "big-creative+relaxed": "creative-innovator",
+    "fast-exciting+all-work": "adventurous-scholar",
+    "quiet-relaxed+relaxed": "mindful-learner",
+    "city-nature+balanced": "balanced-adventurer",
+    "big-creative+balanced": "dynamic-explorer",
+    "big-creative+party": "creative-innovator",
+    "fast-exciting+relaxed": "nature-loving-learner",
+    "fast-exciting+party": "dynamic-explorer",
+    "quiet-relaxed+balanced": "mindful-learner",
+    "quiet-relaxed+party": "balanced-adventurer",
+    "city-nature+all-work": "adventurous-scholar",
+    "city-nature+party": "balanced-adventurer",
+    "default": "dynamic-explorer"
+  }
+}
