@@ -1,6 +1,33 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import quizData from '../../data/quiz-data.json';
+import rawQuizData from '../../data/quiz-data.json';
+
+// Shared shapes for the quiz JSON. Options can carry optional image fields
+// (swipe-card, character-select and image-grid use them; text-select does not),
+// so they are typed as optional to satisfy the production type-check.
+type QuizOption = {
+  label: string;
+  value: string;
+  image?: string;
+  cardImage?: string;
+};
+
+type QuizQuestion = {
+  id: string;
+  type: string;
+  question: string;
+  options: QuizOption[];
+  image?: string;
+  backgroundStyle?: string;
+};
+
+type QuizData = {
+  questions: QuizQuestion[];
+  outcomes: unknown;
+  outcomeLogic: unknown;
+};
+
+const quizData = rawQuizData as unknown as QuizData;
 
 export default function QuizPage() {
   const router = useRouter();
@@ -20,24 +47,21 @@ export default function QuizPage() {
   }, []);
 
   useEffect(() => {
+    setSelected(null);
     setCardIndex(0);
     setAnimKey(prev => prev + 1);
-    const q = quizData.questions[parseInt(id as string)];
-    if (q && q.type === 'swipe-card') {
-      setSelected(0);
-    } else {
-      setSelected(null);
-    }
   }, [id]);
 
   if (!question) return null;
 
   const handleConfirm = () => {
     if (selected === null) return;
+
     const option = question.options[selected];
     const newAnswers = { ...answers, [question.id]: option.value };
     setAnswers(newAnswers);
     sessionStorage.setItem('asqAnswers', JSON.stringify(newAnswers));
+
     if (questionIdx < totalQuestions - 1) {
       router.push(`/quiz/${questionIdx + 1}`);
     } else {
@@ -53,132 +77,158 @@ export default function QuizPage() {
     }
   };
 
+  // Determine background based on question
   const getBg = () => {
-    const s = (question as any).backgroundStyle;
-    if (s === 'orange-gradient') return 'linear-gradient(180deg, #D4813B 0%, #B86730 100%)';
-    if (s === 'orange-warm') return 'linear-gradient(180deg, #C47535 0%, #A85E28 100%)';
-    if (s === 'cream') return 'linear-gradient(180deg, #E8D5B7 0%, #D4C0A0 100%)';
-    if (s === 'navy') return 'linear-gradient(180deg, #2D3E50 0%, #1A2A3A 100%)';
+    const style = question.backgroundStyle;
+    if (style === 'orange-gradient') return 'linear-gradient(180deg, #D4813B 0%, #B86730 100%)';
+    if (style === 'orange-warm') return 'linear-gradient(180deg, #C47535 0%, #A85E28 100%)';
+    if (style === 'cream') return 'linear-gradient(180deg, #E8D5B7 0%, #D4C0A0 100%)';
+    if (style === 'navy') return 'linear-gradient(180deg, #2D3E50 0%, #1A2A3A 100%)';
     return '#2D3E50';
   };
 
-  const isTextOnCream = (question as any).backgroundStyle === 'cream';
+  const isTextOnCream = question.backgroundStyle === 'cream';
   const textColor = isTextOnCream ? '#2D3E50' : '#E8D5B7';
-  const selectedOption = selected !== null ? question.options[selected] : null;
 
   return (
-    <div className="min-h-screen flex items-start justify-center" style={{ backgroundColor: '#2C3E50' }}>
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#2C3E50' }}>
       <div
-        className="w-full max-w-[430px] flex flex-col"
-        style={{ background: getBg(), minHeight: '100vh' }}
+        className="w-full max-w-[390px] min-h-screen sm:min-h-0 sm:h-[844px] sm:rounded-[40px] sm:shadow-2xl overflow-y-auto overflow-x-hidden relative flex flex-col no-scrollbar"
+        style={{ background: getBg() }}
         key={animKey}
       >
-        {/* Header */}
-        <div className="px-6 pt-8 pb-3 text-center shrink-0">
-          <h2 className="text-lg font-bold font-display leading-tight" style={{ color: textColor }}>
+        <div className="flex flex-col items-center px-6 pt-10 pb-8 flex-1">
+
+          {/* Question text */}
+          <h2
+            className="text-xl font-bold text-center mb-6 animate-fadeIn font-display"
+            style={{ color: textColor }}
+          >
             {question.question}
           </h2>
-          <p className="text-xs mt-1 opacity-60" style={{ color: textColor }}>{question.hint}</p>
-        </div>
 
-        {/* Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-5 py-2">
-
-          {/* SWIPE CARD */}
+          {/* === SWIPE CARD TYPE === */}
           {question.type === 'swipe-card' && (
-            <div className="flex flex-col items-center w-full">
-              <div
-                className="flex items-center justify-center w-full cursor-pointer mb-3"
-                onClick={() => setSelected(cardIndex)}
-              >
+            <div className="flex-1 flex flex-col items-center w-full animate-scaleIn">
+              {/* Card display */}
+              <div className="w-full flex justify-center mb-4 relative" style={{ minHeight: 400 }}>
                 <img
                   src={question.options[cardIndex].image}
                   alt={question.options[cardIndex].label}
-                  className="rounded-2xl shadow-xl"
-                  style={{
-                    border: '4px solid #CF863C',
-                    maxHeight: '52vh',
-                    width: 'auto',
-                    maxWidth: '75%',
-                    objectFit: 'contain',
-                  }}
+                  className="w-[280px] rounded-2xl shadow-lg"
+                  style={{ border: selected === cardIndex ? '4px solid #CF863C' : '4px solid transparent' }}
                 />
               </div>
-              <div className="flex gap-1.5 mb-2">
+
+              {/* Dot indicators */}
+              <div className="flex gap-2 mb-3">
                 {question.options.map((_, i) => (
-                  <button key={i} onClick={() => { setCardIndex(i); setSelected(i); }}
-                    className="w-2 h-2 rounded-full transition-all"
-                    style={{ backgroundColor: cardIndex === i ? '#CF863C' : 'rgba(255,255,255,0.3)' }} />
+                  <button
+                    key={i}
+                    onClick={() => { setCardIndex(i); setSelected(i); }}
+                    className="w-2.5 h-2.5 rounded-full transition-all"
+                    style={{ backgroundColor: cardIndex === i ? '#CF863C' : '#4A6B8A' }}
+                  />
                 ))}
               </div>
-              <div className="flex items-center gap-3">
+
+              {/* Arrow navigation */}
+              <div className="flex items-center gap-6 mb-4">
                 <button
-                  onClick={() => { const p = cardIndex > 0 ? cardIndex - 1 : question.options.length - 1; setCardIndex(p); setSelected(p); }}
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-base font-bold"
-                  style={{ color: '#E8D5B7', backgroundColor: 'rgba(255,255,255,0.15)' }}
-                >◀</button>
-                <span className="text-sm font-bold min-w-[140px] text-center" style={{ color: '#E8D5B7' }}>
+                  onClick={() => {
+                    const prev = cardIndex > 0 ? cardIndex - 1 : question.options.length - 1;
+                    setCardIndex(prev);
+                    setSelected(prev);
+                  }}
+                  className="text-2xl px-3 py-1 rounded-lg"
+                  style={{ color: '#E8D5B7' }}
+                >
+                  ◀
+                </button>
+                <span className="text-sm font-bold" style={{ color: '#E8D5B7' }}>
                   {question.options[cardIndex].label}
                 </span>
                 <button
-                  onClick={() => { const n = cardIndex < question.options.length - 1 ? cardIndex + 1 : 0; setCardIndex(n); setSelected(n); }}
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-base font-bold"
-                  style={{ color: '#E8D5B7', backgroundColor: 'rgba(255,255,255,0.15)' }}
-                >▶</button>
+                  onClick={() => {
+                    const next = cardIndex < question.options.length - 1 ? cardIndex + 1 : 0;
+                    setCardIndex(next);
+                    setSelected(next);
+                  }}
+                  className="text-2xl px-3 py-1 rounded-lg"
+                  style={{ color: '#E8D5B7' }}
+                >
+                  ▶
+                </button>
               </div>
             </div>
           )}
 
-          {/* CHARACTER SELECT */}
+          {/* === CHARACTER SELECT TYPE === */}
           {question.type === 'character-select' && (
-            <div className="flex flex-col items-center w-full">
-              <div className="flex gap-3 mb-5">
+            <div className="flex-1 flex flex-col items-center w-full">
+              {/* Thumbnail row */}
+              <div className="flex gap-3 mb-6 animate-fadeIn">
                 {question.options.map((opt, i) => (
-                  <div key={i} onClick={() => setSelected(i)}
-                    className="w-14 h-14 rounded-xl overflow-hidden cursor-pointer transition-all"
-                    style={{
-                      border: selected === i ? '3px solid #CF863C' : '3px solid rgba(255,255,255,0.2)',
-                      backgroundColor: '#3A5068',
-                      boxShadow: selected === i ? '0 0 12px rgba(207,134,60,0.5)' : 'none',
-                      transform: selected === i ? 'scale(1.1)' : 'scale(1)',
-                    }}>
+                  <div
+                    key={i}
+                    onClick={() => setSelected(i)}
+                    className={`character-thumb ${selected === i ? 'selected' : ''}`}
+                    style={{ backgroundColor: '#3A5068' }}
+                  >
                     <img src={opt.image} alt={opt.label} className="w-full h-full object-cover" />
                   </div>
                 ))}
               </div>
-              {selectedOption ? (
-                <div className="flex flex-col items-center">
-                  <img src={selectedOption.image} alt={selectedOption.label}
-                    className="object-contain mb-3" style={{ maxHeight: '42vh' }} />
-                  <h3 className="font-display text-xl" style={{ color: '#E8D5B7' }}>
-                    {selectedOption.label}
+
+              {/* Selected character display */}
+              {selected !== null && (
+                <div className="flex flex-col items-center animate-scaleIn">
+                  <img
+                    src={question.options[selected].image}
+                    alt={question.options[selected].label}
+                    className="w-64 h-64 object-contain mb-4"
+                  />
+                  <h3 className="font-display text-2xl" style={{ color: '#E8D5B7' }}>
+                    {question.options[selected].label}
                   </h3>
                 </div>
-              ) : (
-                <div className="py-20 flex items-center justify-center">
-                  <h3 className="font-display text-xl" style={{ color: '#E8D5B7' }}>Pick a Character!</h3>
+              )}
+
+              {selected === null && (
+                <div className="flex-1 flex items-center">
+                  <h3 className="font-display text-2xl" style={{ color: '#E8D5B7' }}>
+                    Pick a Character!
+                  </h3>
                 </div>
               )}
             </div>
           )}
 
-          {/* TEXT SELECT */}
+          {/* === TEXT SELECT TYPE === */}
           {question.type === 'text-select' && (
-            <div className="flex flex-col items-center w-full">
-              {(question as any).image && (
-                <img src={(question as any).image} alt="" className="h-36 object-contain mb-5" />
+            <div className="flex-1 flex flex-col items-center w-full">
+              {/* Optional image */}
+              {question.image && (
+                <div className="mb-6 animate-scaleIn">
+                  <img
+                    src={question.image}
+                    alt=""
+                    className="w-48 h-48 object-contain"
+                  />
+                </div>
               )}
-              <div className="w-full flex flex-col gap-3">
+
+              {/* Text options */}
+              <div className="w-full flex flex-col gap-3 animate-slideUp">
                 {question.options.map((opt, i) => (
-                  <button key={i} onClick={() => setSelected(i)}
-                    className="w-full py-3 px-5 rounded-xl font-bold text-sm transition-all"
+                  <button
+                    key={i}
+                    onClick={() => setSelected(i)}
+                    className={`option-pill ${selected === i ? 'selected' : ''}`}
                     style={{
-                      backgroundColor: selected === i ? '#A85E28' : '#CF863C',
-                      color: 'white',
-                      border: selected === i ? '2px solid white' : '2px solid rgba(255,255,255,0.15)',
-                      boxShadow: selected === i ? '0 0 15px rgba(255,255,255,0.2)' : '0 2px 8px rgba(0,0,0,0.1)',
-                      transform: selected === i ? 'scale(1.02)' : 'scale(1)',
-                    }}>
+                      animationDelay: `${i * 0.1}s`,
+                    }}
+                  >
                     {opt.label}
                   </button>
                 ))}
@@ -186,45 +236,53 @@ export default function QuizPage() {
             </div>
           )}
 
-          {/* IMAGE GRID */}
+          {/* === IMAGE GRID TYPE === */}
           {question.type === 'image-grid' && (
-            <div className="grid grid-cols-2 gap-3 w-full">
-              {question.options.map((opt, i) => (
-                <div key={i} onClick={() => setSelected(i)}
-                  className="flex flex-col items-center cursor-pointer transition-all rounded-xl p-3"
-                  style={{
-                    backgroundColor: selected === i ? 'rgba(207,134,60,0.35)' : 'rgba(255,255,255,0.08)',
-                    border: selected === i ? '3px solid #CF863C' : '3px solid rgba(255,255,255,0.1)',
-                    boxShadow: selected === i ? '0 0 15px rgba(207,134,60,0.3)' : 'none',
-                    transform: selected === i ? 'scale(1.03)' : 'scale(1)',
-                  }}>
-                  <img src={opt.image || ''} alt={opt.label} className="w-20 h-20 object-contain mb-1" />
-                  <span className="text-xs font-bold text-center leading-tight" style={{ color: textColor }}>
-                    {opt.label}
-                  </span>
-                </div>
-              ))}
+            <div className="flex-1 flex flex-col items-center w-full">
+              <div className="grid grid-cols-2 gap-3 w-full animate-fadeIn">
+                {question.options.map((opt, i) => (
+                  <div
+                    key={i}
+                    onClick={() => setSelected(i)}
+                    className={`image-option flex flex-col items-center ${selected === i ? 'selected' : ''}`}
+                  >
+                    <img
+                      src={opt.image || ''}
+                      alt={opt.label}
+                      className="w-full aspect-square object-cover rounded-xl"
+                    />
+                    <span
+                      className="text-sm font-bold mt-2 text-center"
+                      style={{ color: textColor }}
+                    >
+                      {opt.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
-        </div>
 
-        {/* Single bottom confirm*/}
-        <div className="px-6 pb-8 pt-4 flex flex-col items-center shrink-0">
-          <button onClick={handleConfirm} disabled={selected === null}
-            className="w-full max-w-[260px] py-3 rounded-xl font-bold text-base transition-all"
-            style={{
-              backgroundColor: selected !== null ? '#CF863C' : '#4A6B8A',
-              color: selected !== null ? 'white' : '#8BA4B8',
-              opacity: selected !== null ? 1 : 0.5,
-              boxShadow: selected !== null ? '0 4px 15px rgba(207,134,60,0.4)' : 'none',
-            }}>
-            Confirm
-          </button>
-          <button onClick={handleBack}
-            className="mt-2 text-xs font-bold opacity-70 hover:opacity-100 transition-opacity"
-            style={{ color: '#CF863C' }}>
-            I Changed my mind!
-          </button>
+          {/* Spacer */}
+          <div className="flex-grow" />
+
+          {/* Confirm button */}
+          <div className="w-full flex flex-col items-center mt-6 animate-fadeIn delay-300">
+            <button
+              onClick={handleConfirm}
+              disabled={selected === null}
+              className={`btn-confirm w-full max-w-[280px] ${selected !== null ? 'active' : ''}`}
+            >
+              Confirm
+            </button>
+            <button
+              onClick={handleBack}
+              className="mt-3 text-sm font-bold transition-opacity hover:opacity-80"
+              style={{ color: '#CF863C' }}
+            >
+              I Changed my mind!
+            </button>
+          </div>
         </div>
       </div>
     </div>
