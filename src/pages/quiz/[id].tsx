@@ -54,8 +54,16 @@ export default function QuizPage() {
 
   if (!question) return null;
 
+  // Guard against a stale `selected`/`cardIndex` carried over from a previous
+  // question that had more options than the current one. Without this, reading
+  // question.options[selected] can be undefined and crash the page.
+  const optionCount = question.options.length;
+  const safeSelected =
+    selected !== null && selected < optionCount ? selected : null;
+  const safeCardIndex = cardIndex < optionCount ? cardIndex : 0;
+
   const handleConfirm = () => {
-    if (selected === null) return;
+    if (selected === null || selected >= question.options.length) return;
 
     const option = question.options[selected];
     const newAnswers = { ...answers, [question.id]: option.value };
@@ -97,11 +105,11 @@ export default function QuizPage() {
         style={{ background: getBg() }}
         key={animKey}
       >
-        <div className="flex flex-col items-center px-6 pt-10 pb-8 flex-1">
+        <div className="flex flex-col items-center px-6 pt-6 pb-6 flex-1">
 
           {/* Question text */}
           <h2
-            className="text-xl font-bold text-center mb-6 animate-fadeIn font-display"
+            className="text-xl font-bold text-center mb-4 animate-fadeIn font-display"
             style={{ color: textColor }}
           >
             {question.question}
@@ -111,10 +119,10 @@ export default function QuizPage() {
           {question.type === 'swipe-card' && (
             <div className="flex-1 flex flex-col items-center w-full animate-scaleIn">
               {/* Card display */}
-              <div className="w-full flex justify-center mb-4 relative" style={{ minHeight: 400 }}>
+              <div className="w-full flex justify-center mb-4 relative" style={{ minHeight: 340 }}>
                 <img
-                  src={question.options[cardIndex].image}
-                  alt={question.options[cardIndex].label}
+                  src={question.options[safeCardIndex].image}
+                  alt={question.options[safeCardIndex].label}
                   className="w-[280px] rounded-2xl shadow-lg"
                   style={{ border: selected === cardIndex ? '4px solid #CF863C' : '4px solid transparent' }}
                 />
@@ -127,7 +135,7 @@ export default function QuizPage() {
                     key={i}
                     onClick={() => { setCardIndex(i); setSelected(i); }}
                     className="w-2.5 h-2.5 rounded-full transition-all"
-                    style={{ backgroundColor: cardIndex === i ? '#CF863C' : '#4A6B8A' }}
+                    style={{ backgroundColor: safeCardIndex === i ? '#CF863C' : '#4A6B8A' }}
                   />
                 ))}
               </div>
@@ -136,7 +144,7 @@ export default function QuizPage() {
               <div className="flex items-center gap-6 mb-4">
                 <button
                   onClick={() => {
-                    const prev = cardIndex > 0 ? cardIndex - 1 : question.options.length - 1;
+                    const prev = safeCardIndex > 0 ? safeCardIndex - 1 : question.options.length - 1;
                     setCardIndex(prev);
                     setSelected(prev);
                   }}
@@ -146,11 +154,11 @@ export default function QuizPage() {
                   ◀
                 </button>
                 <span className="text-sm font-bold" style={{ color: '#E8D5B7' }}>
-                  {question.options[cardIndex].label}
+                  {question.options[safeCardIndex].label}
                 </span>
                 <button
                   onClick={() => {
-                    const next = cardIndex < question.options.length - 1 ? cardIndex + 1 : 0;
+                    const next = safeCardIndex < question.options.length - 1 ? safeCardIndex + 1 : 0;
                     setCardIndex(next);
                     setSelected(next);
                   }}
@@ -181,20 +189,20 @@ export default function QuizPage() {
               </div>
 
               {/* Selected character display */}
-              {selected !== null && (
+              {safeSelected !== null && (
                 <div className="flex flex-col items-center animate-scaleIn">
                   <img
-                    src={question.options[selected].image}
-                    alt={question.options[selected].label}
-                    className="w-64 h-64 object-contain mb-4"
+                    src={question.options[safeSelected].image}
+                    alt={question.options[safeSelected].label}
+                    className="w-52 h-52 object-contain mb-3"
                   />
                   <h3 className="font-display text-2xl" style={{ color: '#E8D5B7' }}>
-                    {question.options[selected].label}
+                    {question.options[safeSelected].label}
                   </h3>
                 </div>
               )}
 
-              {selected === null && (
+              {safeSelected === null && (
                 <div className="flex-1 flex items-center">
                   <h3 className="font-display text-2xl" style={{ color: '#E8D5B7' }}>
                     Pick a Character!
@@ -267,7 +275,7 @@ export default function QuizPage() {
           <div className="flex-grow" />
 
           {/* Confirm button */}
-          <div className="w-full flex flex-col items-center mt-6 animate-fadeIn delay-300">
+          <div className="w-full flex flex-col items-center mt-4 animate-fadeIn delay-300">
             <button
               onClick={handleConfirm}
               disabled={selected === null}
